@@ -8,14 +8,18 @@
   #include "ssd1306.h"
 #endif
 
+#define MODS_SHIFT_MASK (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT))
+#define MODS_CTRL_MASK  (MOD_BIT(KC_LCTL)|MOD_BIT(KC_RCTRL))
+#define MODS_ALT_MASK   (MOD_BIT(KC_LALT)|MOD_BIT(KC_RALT))
+#define MODS_GUI_MASK   (MOD_BIT(KC_LGUI)|MOD_BIT(KC_RGUI)) 
+
 extern keymap_config_t keymap_config;
+extern uint8_t is_master;
 
 #ifdef RGBLIGHT_ENABLE
 //Following line allows macro to read current RGB settings
 extern rgblight_config_t rgblight_config;
 #endif
-
-extern uint8_t is_master;
 
 // Each layer gets a name for readability, which is then used in the keymap matrix below.
 // The underscores don't mean anything - you can have a layer called STUFF or any other name.
@@ -35,10 +39,6 @@ enum custom_keycodes {
   RGBRST
 };
 
-enum macro_keycodes {
-  KC_SAMPLEMACRO,
-};
-
 #define KC______ KC_TRNS
 #define KC_XXXXX KC_NO
 #define KC_LOWER LOWER
@@ -52,101 +52,181 @@ enum macro_keycodes {
 #define KC_LSAD  RGB_SAD
 #define KC_LVAI  RGB_VAI
 #define KC_LVAD  RGB_VAD
-#define KC_LSMOD RGB_SMOD
+#define KC_LSMOD RGB_MOD
 #define KC_CTLTB CTL_T(KC_TAB)
-#define KC_GUIEI GUI_T(KC_LANG2)
-#define KC_ALTKN ALT_T(KC_LANG1)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_QWERTY] = LAYOUT_kc( \
   //,-----------------------------------------.                ,-----------------------------------------.
         ESC,     Q,     W,     E,     R,     T,                      Y,     U,     I,     O,     P,  BSPC,\
-  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+  // ------+------+------+------+------+------|                |------+------+------+------+------+------|
       CTLTB,     A,     S,     D,     F,     G,                      H,     J,     K,     L,  SCLN,  QUOT,\
-  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+  // ------+------+------+------+------+------|                |------+------+------+------+------+------|
        LSFT,     Z,     X,     C,     V,     B,                      N,     M,  COMM,   DOT,  SLSH,  RSFT,\
-  //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
+  // ------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
+                                  LGUI,  LOWER,   SPC,      ENT, RAISE, LALT \
                               //`--------------------'  `--------------------'
   ),
 
   [_LOWER] = LAYOUT_kc( \
   //,-----------------------------------------.                ,-----------------------------------------.
         ESC,     1,     2,     3,     4,     5,                      6,     7,     8,     9,     0,  BSPC,\
-  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+  // ------+------+------+------+------+------|                |------+------+------+------+------+------|
       CTLTB,    F1,    F2,    F3,    F4,    F5,                     F6,    F7,    F8,    F9,   F10, XXXXX,\
-  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+  // ------+------+------+------+------+------|                |------+------+------+------+------+------|
        LSFT,   F11,   F12,   F13,   F14,   F15,                    F16,   F17,   F18,   F19,   F20, XXXXX,\
-  //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
+  // ------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
+                                  LGUI,  LOWER,   SPC,      ENT, RAISE,  LALT \
                               //`--------------------'  `--------------------'
   ),
 
   [_RAISE] = LAYOUT_kc( \
   //,-----------------------------------------.                ,-----------------------------------------.
         ESC,  EXLM,    AT,  HASH,   DLR,  PERC,                   CIRC,  AMPR,  ASTR,  LPRN,  RPRN,  BSPC,\
-  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+  // ------+------+------+------+------+------|                |------+------+------+------+------+------|
       CTLTB, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,                   MINS,   EQL,  LCBR,  RCBR,  PIPE,   GRV,\
-  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+  // ------+------+------+------+------+------|                |------+------+------+------+------+------|
        LSFT, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,                   UNDS,  PLUS,  LBRC,  RBRC,  BSLS,  TILD,\
-  //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
+  // ------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
+                                   LGUI, LOWER,   SPC,      ENT, RAISE,  LALT \
                               //`--------------------'  `--------------------'
   ),
 
   [_ADJUST] = LAYOUT_kc( \
   //,-----------------------------------------.                ,-----------------------------------------.
         RST,  LRST, XXXXX, XXXXX, XXXXX, XXXXX,                  XXXXX, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,\
-  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+  // ------+------+------+------+------+------|                |------+------+------+------+------+------|
        LTOG,  LHUI,  LSAI,  LVAI, XXXXX, XXXXX,                  XXXXX, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,\
-  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+  // ------+------+------+------+------+------|                |------+------+------+------+------+------|
       LSMOD,  LHUD,  LSAD,  LVAD, XXXXX, XXXXX,                  XXXXX, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,\
-  //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
+  // ------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
+                                   LGUI, LOWER,   SPC,      ENT, RAISE,  LALT \
                               //`--------------------'  `--------------------'
   )
 };
 
 int RGB_current_mode;
 
-void persistent_default_layer_set(uint16_t default_layer) {
-  eeconfig_update_default_layer(default_layer);
-  default_layer_set(default_layer);
-}
-
-// Setting ADJUST layer RGB back to default
-void update_tri_layer_RGB(uint8_t layer1, uint8_t layer2, uint8_t layer3) {
-  if (IS_LAYER_ON(layer1) && IS_LAYER_ON(layer2)) {
-    layer_on(layer3);
-  } else {
-    layer_off(layer3);
-  }
-}
-
 void matrix_init_user(void) {
-    #ifdef RGBLIGHT_ENABLE
-      RGB_current_mode = rgblight_config.mode;
-    #endif
-    //SSD1306 OLED init, make sure to add #define SSD1306OLED in config.h
-    #ifdef SSD1306OLED
-        iota_gfx_init(!has_usb());   // turns on the display
-    #endif
+  //SSD1306 OLED init, make sure to add #define SSD1306OLED in config.h
+  #ifdef SSD1306OLED
+      iota_gfx_init(!has_usb());   // turns on the display
+  #endif
+
+  #ifdef RGBLIGHT_ENABLE
+    RGB_current_mode = rgblight_config.mode;
+  #endif
+
+  DDRD &= ~(1<<5);
+  PORTD &= ~(1<<5);
+
+  DDRB &= ~(1<<0);
+  PORTB &= ~(1<<0);
 }
 
 //SSD1306 OLED update loop, make sure to add #define SSD1306OLED in config.h
 #ifdef SSD1306OLED
 
 // When add source files to SRC in rules.mk, you can use functions.
-const char *read_layer_state(void);
 const char *read_logo(void);
-void set_keylog(uint16_t keycode, keyrecord_t *record);
-const char *read_keylog(void);
-const char *read_keylogs(void);
+char layer_state_str[24];
+char modifier_state_str[24];
+char host_led_state_str[24];
+char keylog_str[24] = {};
+char keylogs_str[21] = {};
+int keylogs_str_idx = 0;
 
 // const char *read_mode_icon(bool swap);
-// const char *read_host_led_state(void);
 // void set_timelog(void);
 // const char *read_timelog(void);
+
+const char code_to_name[60] = {
+    ' ', ' ', ' ', ' ', 'a', 'b', 'c', 'd', 'e', 'f',
+    'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+    'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+    'R', 'E', 'B', 'T', '_', '-', '=', '[', ']', '\\',
+    '#', ';', '\'', '`', ',', '.', '/', ' ', ' ', ' '};
+
+void set_keylog(uint16_t keycode, keyrecord_t *record) {
+  char name = ' ';
+  if (keycode < 60) {
+    name = code_to_name[keycode];
+  }
+
+  // update keylog
+  snprintf(keylog_str, sizeof(keylog_str), "%dx%d, k%2d : %c",
+           record->event.key.row, record->event.key.col,
+           keycode, name);
+
+  // update keylogs
+  if (keylogs_str_idx == sizeof(keylogs_str) - 1) {
+    keylogs_str_idx = 0;
+    for (int i = 0; i < sizeof(keylogs_str) - 1; i++) {
+      keylogs_str[i] = ' ';
+    }
+  }
+
+  keylogs_str[keylogs_str_idx] = name;
+  keylogs_str_idx++;
+}
+
+const char *read_keylog(void) {
+  return keylog_str;
+}
+
+const char *read_keylogs(void) {
+  return keylogs_str;
+}
+
+const char* read_modifier_state(void) {
+  uint8_t modifiers = get_mods();
+  uint8_t one_shot = get_oneshot_mods();
+
+  snprintf(modifier_state_str, sizeof(modifier_state_str), "Mods:%s %s %s %s",
+    (modifiers & MODS_CTRL_MASK || one_shot & MODS_CTRL_MASK) ? "CTL" : "   ",
+    (modifiers & MODS_GUI_MASK || one_shot & MODS_GUI_MASK) ? "GUI" : "   ",
+    (modifiers & MODS_ALT_MASK || one_shot & MODS_ALT_MASK) ? "ALT" : "   ",
+    (modifiers & MODS_SHIFT_MASK || one_shot & MODS_SHIFT_MASK) ? "SFT" : "   "
+  );
+
+  return modifier_state_str;
+}
+
+const char *read_host_led_state(void) {
+  uint8_t leds = host_keyboard_leds();
+
+  snprintf(host_led_state_str, sizeof(host_led_state_str), "NL:%s CL:%s SL:%s",
+    (leds & (1 << USB_LED_NUM_LOCK)) ? "on" : "- ",
+    (leds & (1 << USB_LED_CAPS_LOCK)) ? "on" : "- ",
+    (leds & (1 << USB_LED_SCROLL_LOCK)) ? "on" : "- "
+  );
+
+  return host_led_state_str;
+}
+
+const char* read_layer_state(void) {
+  switch (biton32(layer_state)) {
+    case _RAISE:
+      snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Raise  ");
+      break;
+    case _LOWER:
+      snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Lower  ");
+      break;
+    case _ADJUST:
+      snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Adjust ");
+      break;
+    default:
+      switch (biton32(default_layer_state)) {
+        case _QWERTY:
+          snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Qwerty ");
+          break;
+      }
+      break;
+  }
+
+  return layer_state_str;
+}
 
 void matrix_scan_user(void) {
    iota_gfx_task();
@@ -154,12 +234,13 @@ void matrix_scan_user(void) {
 
 void matrix_render_user(struct CharacterMatrix *matrix) {
   if (is_master) {
-    // If you want to change the display of OLED, you need to change here
+    //If you want to change the display of OLED, you need to change here
     matrix_write_ln(matrix, read_layer_state());
-    matrix_write_ln(matrix, read_keylog());
+    matrix_write_ln(matrix, read_modifier_state());
+    // matrix_write_ln(matrix, read_keylog());
     matrix_write_ln(matrix, read_keylogs());
-    //matrix_write_ln(matrix, read_mode_icon(keymap_config.swap_lalt_lgui));
-    //matrix_write_ln(matrix, read_host_led_state());
+    // matrix_write_ln(matrix, read_mode_icon(keymap_config.swap_lalt_lgui));
+    matrix_write(matrix, read_host_led_state());
     //matrix_write_ln(matrix, read_timelog());
   } else {
     matrix_write(matrix, read_logo());
@@ -179,40 +260,40 @@ void iota_gfx_task_user(void) {
   matrix_render_user(&matrix);
   matrix_update(&display, &matrix);
 }
-#endif//SSD1306OLED
+#endif
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  if (record->event.pressed) {
 #ifdef SSD1306OLED
-    set_keylog(keycode, record);
-#endif
+  switch (keycode) {
+    case KC_A ... KC_SLASH:
+    case KC_F1 ... KC_F12:
+    case KC_INSERT ... KC_UP:
+    case KC_KP_SLASH ... KC_KP_DOT:
+    case KC_F13 ... KC_F24:
+    if (record->event.pressed) { set_keylog(keycode, record); }
+      break;
     // set_timelog();
   }
+#endif
 
   switch (keycode) {
-    case QWERTY:
-      if (record->event.pressed) {
-        persistent_default_layer_set(1UL<<_QWERTY);
-      }
-      return false;
-      break;
     case LOWER:
       if (record->event.pressed) {
         layer_on(_LOWER);
-        update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
+        update_tri_layer(_LOWER, _RAISE, _ADJUST);
       } else {
         layer_off(_LOWER);
-        update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
+        update_tri_layer(_LOWER, _RAISE, _ADJUST);
       }
       return false;
       break;
     case RAISE:
       if (record->event.pressed) {
         layer_on(_RAISE);
-        update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
+        update_tri_layer(_LOWER, _RAISE, _ADJUST);
       } else {
         layer_off(_RAISE);
-        update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
+        update_tri_layer(_LOWER, _RAISE, _ADJUST);
       }
       return false;
       break;
@@ -224,6 +305,47 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
         return false;
         break;
+    case KC_BSPC:
+      if (record->event.pressed) {
+        // If shift was pressed, send delete.
+        if ((get_mods() & (MOD_BIT(KC_RSFT) | MOD_BIT(KC_LSFT))) != 0)
+        {
+          uint8_t temp_mods = get_mods(); // Save the originally pressed modifier keys.
+
+          // If only one shift was pressed, ignore it.
+          if ((get_mods() & MOD_BIT(KC_LSFT)) == 0 || (get_mods() & MOD_BIT(KC_RSFT)) == 0)
+          {
+            if ((get_mods() & MOD_BIT(KC_LSFT)) != 0)
+            {
+              set_mods(temp_mods &~MOD_BIT(KC_LSFT)); // Unshift the left shift.
+            }
+            else if ((get_mods() & MOD_BIT(KC_RSFT)) != 0)
+            {
+              set_mods(temp_mods &~MOD_BIT(KC_RSFT)); // Unshift the right shift.
+            }
+          }
+
+          register_code(KC_DEL);
+
+          set_mods(temp_mods); // Restore the original held modifier keys.
+        }
+        else
+        {
+          // On a regular press, send backspace.
+          register_code(KC_BSPC);
+        }
+        // The keypress is handled, don't let QMK handle it.
+        return false;
+      }
+      else
+      {
+        // Because the above subroutine altered what code was registered, we need
+        // to manually unregister the codes. Unregistering both can't hurt and
+        // makes it so we don't have to do bookkeeping.
+        unregister_code(KC_DEL);
+        unregister_code(KC_BSPC);
+      }
+      break;
     case RGB_MOD:
       #ifdef RGBLIGHT_ENABLE
         if (record->event.pressed) {
