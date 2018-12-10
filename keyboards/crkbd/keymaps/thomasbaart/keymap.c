@@ -25,13 +25,15 @@ extern rgblight_config_t rgblight_config;
 // The underscores don't mean anything - you can have a layer called STUFF or any other name.
 // Layer names don't all need to be of the same length, obviously, and you can also skip them
 // entirely and just use numbers.
-#define _QWERTY 0
+#define _COLEMAK 0
+#define _DVORAK 1
 #define _LOWER 3
 #define _RAISE 4
 #define _ADJUST 16
 
 enum custom_keycodes {
-  QWERTY = SAFE_RANGE,
+  COLEMAK = SAFE_RANGE,
+  DVORAK,
   LOWER,
   RAISE,
   ADJUST,
@@ -39,33 +41,32 @@ enum custom_keycodes {
   RGBRST
 };
 
-#define KC______ KC_TRNS
-#define KC_XXXXX KC_NO
-#define KC_LOWER LOWER
-#define KC_RAISE RAISE
-#define KC_RST   RESET
-#define KC_LRST  RGBRST
-#define KC_LTOG  RGB_TOG
-#define KC_LHUI  RGB_HUI
-#define KC_LHUD  RGB_HUD
-#define KC_LSAI  RGB_SAI
-#define KC_LSAD  RGB_SAD
-#define KC_LVAI  RGB_VAI
-#define KC_LVAD  RGB_VAD
-#define KC_LSMOD RGB_MOD
-#define KC_CTLTB CTL_T(KC_TAB)
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-  [_QWERTY] = LAYOUT_kc( \
-  //,-----------------------------------------.                ,-----------------------------------------.
-        ESC,     Q,     W,     E,     R,     T,                      Y,     U,     I,     O,     P,  BSPC,\
-  // ------+------+------+------+------+------|                |------+------+------+------+------+------|
-      CTLTB,     A,     S,     D,     F,     G,                      H,     J,     K,     L,  SCLN,  QUOT,\
-  // ------+------+------+------+------+------|                |------+------+------+------+------+------|
-       LSFT,     Z,     X,     C,     V,     B,                      N,     M,  COMM,   DOT,  SLSH,  RSFT,\
-  // ------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  LGUI,  LOWER,   SPC,      ENT, RAISE, LALT \
-                              //`--------------------'  `--------------------'
+  [_COLEMAK] = LAYOUT( \
+  // TODO: Rework all this into a sensible layout
+  // https://github.com/qmk/qmk_firmware/blob/master/users/drashna/wrappers.h
+  //,-----------------------------------------------------.    ,-----------------------------------------------------.
+       KC_ESC,    KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,         KC_J,    KC_L,    KC_U,    KC_Y, KC_SCLN, KC_BSPC,\
+  // --------+--------+--------+--------+--------+--------|    |--------+--------+--------+--------+--------+--------|
+       KC_TAB,    KC_A,    KC_R,    KC_S,    KC_T,    KC_G,         KC_M,    KC_N,    KC_E,    KC_I,    KC_O,   KC_NO, \
+  // --------+--------+--------+--------+--------+--------|    |--------+--------+--------+--------+--------+--------|
+      KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,         KC_K,    KC_H, KC_COMM,  KC_DOT,KC_SLASH,    RSFT,\
+  // --------+--------+--------+--------+--------+--------+|  |+--------+--------+--------+--------+--------+--------|
+                       LT(_LOWER,KC_GRV),  KC_SPC, KC_BSPC,       KC_DEL,  KC_ENT,   RAISE \
+                              //`--------------------------'  `---------------------------'
+  ),
+
+  [_DVORAK] = LAYOUT( \
+  // TODO: Rework all this into a sensible layout
+  //,-----------------------------------------------------.    ,-----------------------------------------------------.
+       KC_ESC, KC_QUOT, KC_COMM,  KC_DOT,    KC_P,    KC_Y,         KC_F,    KC_G,    KC_C,    KC_R,    KC_L, KC_BSPC,\
+  // --------+--------+--------+--------+--------+--------|    |--------+--------+--------+--------+--------+--------|
+       KC_TAB,    KC_A,    KC_O,    KC_E,    KC_U,    KC_I,         KC_D,    KC_H,    KC_T,    KC_N,    KC_S,   KC_NO, \
+  // --------+--------+--------+--------+--------+--------|    |--------+--------+--------+--------+--------+--------|
+      KC_LSFT, KC_SCLN,    KC_Q,    KC_J,    KC_K,    KC_X,         KC_B,    KC_M,    KC_W,    KC_V,    KC_Z,    RSFT,\
+  // --------+--------+--------+--------+--------+--------+|  |+--------+--------+--------+--------+--------+--------|
+                       LT(_LOWER,KC_GRV),  KC_SPC, KC_BSPC,       KC_DEL,  KC_ENT,   RAISE \
+                              //`--------------------------'  `---------------------------'
   ),
 
   [_LOWER] = LAYOUT_kc( \
@@ -221,8 +222,11 @@ const char* read_layer_state(void) {
       break;
     default:
       switch (biton32(default_layer_state)) {
-        case _QWERTY:
-          snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Qwerty ");
+        case _COLEMAK:
+          snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Colemak ");
+          break;
+        case _DVORAK:
+          snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Dvorak ");
           break;
       }
       break;
