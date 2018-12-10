@@ -132,6 +132,8 @@ const char *read_logo(void);
 char layer_state_str[24];
 char modifier_state_str[24];
 char host_led_state_str[24];
+
+#ifndef NO_KEYLOG
 char keylog_str[24] = {};
 char keylogs_str[21] = {};
 int keylogs_str_idx = 0;
@@ -178,6 +180,7 @@ const char *read_keylog(void) {
 const char *read_keylogs(void) {
   return keylogs_str;
 }
+#endif // NO_KEYLOG
 
 const char* read_modifier_state(void) {
   uint8_t modifiers = get_mods();
@@ -238,7 +241,9 @@ void matrix_render_user(struct CharacterMatrix *matrix) {
     matrix_write_ln(matrix, read_layer_state());
     matrix_write_ln(matrix, read_modifier_state());
     // matrix_write_ln(matrix, read_keylog());
+#ifndef NO_KEYLOG
     matrix_write_ln(matrix, read_keylogs());
+#endif // NO_KEYLOG
     // matrix_write_ln(matrix, read_mode_icon(keymap_config.swap_lalt_lgui));
     matrix_write(matrix, read_host_led_state());
     //matrix_write_ln(matrix, read_timelog());
@@ -264,6 +269,7 @@ void iota_gfx_task_user(void) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef SSD1306OLED
+#ifndef NO_KEYLOG
   switch (keycode) {
     case KC_A ... KC_SLASH:
     case KC_F1 ... KC_F12:
@@ -274,6 +280,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       break;
     // set_timelog();
   }
+#endif
 #endif
 
   switch (keycode) {
@@ -313,13 +320,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           uint8_t temp_mods = get_mods(); // Save the originally pressed modifier keys.
 
           // If only one shift was pressed, ignore it.
-          if ((get_mods() & MOD_BIT(KC_LSFT)) == 0 || (get_mods() & MOD_BIT(KC_RSFT)) == 0)
+          if ((temp_mods & MOD_BIT(KC_LSFT)) == 0 || (temp_mods & MOD_BIT(KC_RSFT)) == 0)
           {
-            if ((get_mods() & MOD_BIT(KC_LSFT)) != 0)
+            if ((temp_mods & MOD_BIT(KC_LSFT)) != 0)
             {
               set_mods(temp_mods &~MOD_BIT(KC_LSFT)); // Unshift the left shift.
             }
-            else if ((get_mods() & MOD_BIT(KC_RSFT)) != 0)
+            else if ((temp_mods & MOD_BIT(KC_RSFT)) != 0)
             {
               set_mods(temp_mods &~MOD_BIT(KC_RSFT)); // Unshift the right shift.
             }
@@ -334,8 +341,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           // On a regular press, send backspace.
           register_code(KC_BSPC);
         }
-        // The keypress is handled, don't let QMK handle it.
-        return false;
       }
       else
       {
@@ -345,6 +350,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         unregister_code(KC_DEL);
         unregister_code(KC_BSPC);
       }
+      // The keypress is handled, don't let QMK handle it.
+      return false;
       break;
     case RGB_MOD:
       #ifdef RGBLIGHT_ENABLE
