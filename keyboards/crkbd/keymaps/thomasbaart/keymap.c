@@ -25,14 +25,16 @@ extern rgblight_config_t rgblight_config;
 // The underscores don't mean anything - you can have a layer called STUFF or any other name.
 // Layer names don't all need to be of the same length, obviously, and you can also skip them
 // entirely and just use numbers.
-#define _COLEMAK 0
-#define _DVORAK 1
+#define _QWERTY 0
+#define _COLEMAK 1
+#define _DVORAK 2
 #define _LOWER 3
 #define _RAISE 4
 #define _ADJUST 16
 
 enum custom_keycodes {
-  COLEMAK = SAFE_RANGE,
+  QWERTY = SAFE_RANGE,
+  COLEMAK,
   DVORAK,
   LOWER,
   RAISE,
@@ -41,7 +43,28 @@ enum custom_keycodes {
   RGBRST
 };
 
+#define BKS_SHFT mod tap shift backspace
+#define RET_LOWR mod tap lower return
+#define SPC_RAIS mod tap raise space
+#define Z_CTRL mod tap ctrl z
+#define X_GUI mod tap gui X
+#define C_ALT mod tap gui alt
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+  [_QWERTY] = LAYOUT( \
+  // TODO: Rework all this into a sensible layout
+  // https://github.com/qmk/qmk_firmware/blob/master/users/drashna/wrappers.h
+  //,-----------------------------------------------------.    ,-----------------------------------------------------.
+       KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, XXXXXXX,\
+  // --------+--------+--------+--------+--------+--------|    |--------+--------+--------+--------+--------+--------|
+       KC_TAB,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, XXXXXXX, \
+  // --------+--------+--------+--------+--------+--------|    |--------+--------+--------+--------+--------+--------|
+      XXXXXXX,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,         KC_N,    KC_M, KC_COMM,  KC_DOT,KC_SLASH, XXXXXXX,\
+  // --------+--------+--------+--------+--------+--------+|  |+--------+--------+--------+--------+--------+--------|
+                                KC_LCTRL,BKS_SHFT,RET_LOWR,     SPC_RAIS, KC_RSFT, KC_LEAD \
+                              //`--------------------------'  `---------------------------'
+  ),
+
   [_COLEMAK] = LAYOUT( \
   // TODO: Rework all this into a sensible layout
   // https://github.com/qmk/qmk_firmware/blob/master/users/drashna/wrappers.h
@@ -69,41 +92,41 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                               //`--------------------------'  `---------------------------'
   ),
 
-  [_LOWER] = LAYOUT_kc( \
-  //,-----------------------------------------.                ,-----------------------------------------.
-        ESC,     1,     2,     3,     4,     5,                      6,     7,     8,     9,     0,  BSPC,\
-  // ------+------+------+------+------+------|                |------+------+------+------+------+------|
-      CTLTB,    F1,    F2,    F3,    F4,    F5,                     F6,    F7,    F8,    F9,   F10, XXXXX,\
-  // ------+------+------+------+------+------|                |------+------+------+------+------+------|
-       LSFT,   F11,   F12,   F13,   F14,   F15,                    F16,   F17,   F18,   F19,   F20, XXXXX,\
-  // ------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  LGUI,  LOWER,   SPC,      ENT, RAISE,  LALT \
-                              //`--------------------'  `--------------------'
+  [_LOWER] = LAYOUT( \
+  //,-----------------------------------------------------.    ,-----------------------------------------------------.
+      _______, KC_EXLM,   KC_AT, KC_HASH,  KC_DLR, KC_PERC,      KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_BSPC,\
+  // --------+--------+--------+--------+--------+--------|    |--------+--------+--------+--------+--------+--------|
+      _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,      _______, KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR,   KC_NO, \
+  // --------+--------+--------+--------+--------+--------|    |--------+--------+--------+--------+--------+--------|
+      _______,   KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,      _______, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT,    RSFT,\
+  // --------+--------+--------+--------+--------+--------+|  |+--------+--------+--------+--------+--------+--------|
+                                 _______, _______, _______,      _______, _______, _______ \
+                              //`--------------------------'  `---------------------------'
   ),
 
-  [_RAISE] = LAYOUT_kc( \
-  //,-----------------------------------------.                ,-----------------------------------------.
-        ESC,  EXLM,    AT,  HASH,   DLR,  PERC,                   CIRC,  AMPR,  ASTR,  LPRN,  RPRN,  BSPC,\
-  // ------+------+------+------+------+------|                |------+------+------+------+------+------|
-      CTLTB, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,                   MINS,   EQL,  LCBR,  RCBR,  PIPE,   GRV,\
-  // ------+------+------+------+------+------|                |------+------+------+------+------+------|
-       LSFT, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,                   UNDS,  PLUS,  LBRC,  RBRC,  BSLS,  TILD,\
-  // ------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                   LGUI, LOWER,   SPC,      ENT, RAISE,  LALT \
-                              //`--------------------'  `--------------------'
+  [_RAISE] = LAYOUT( \
+  //,-----------------------------------------------------.    ,-----------------------------------------------------.
+      _______,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,         KC_6,    KC_7,    KC_8,    KC_9,    KC_0, _______,\
+  // --------+--------+--------+--------+--------+--------|    |--------+--------+--------+--------+--------+--------|
+      _______, _______, _______, _______, _______, _______,      _______, KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC, _______, \
+  // --------+--------+--------+--------+--------+--------|    |--------+--------+--------+--------+--------+--------|
+      _______, _______, _______, _______, _______, _______,      _______, KC_HOME, KC_PGDN, KC_PGUP,  KC_END, _______,\
+  // --------+--------+--------+--------+--------+--------+|  |+--------+--------+--------+--------+--------+--------|
+                                 _______, _______, _______,      _______, _______, _______ \
+                              //`--------------------------'  `---------------------------'
   ),
 
-  [_ADJUST] = LAYOUT_kc( \
-  //,-----------------------------------------.                ,-----------------------------------------.
-        RST,  LRST, XXXXX, XXXXX, XXXXX, XXXXX,                  XXXXX, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,\
-  // ------+------+------+------+------+------|                |------+------+------+------+------+------|
-       LTOG,  LHUI,  LSAI,  LVAI, XXXXX, XXXXX,                  XXXXX, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,\
-  // ------+------+------+------+------+------|                |------+------+------+------+------+------|
-      LSMOD,  LHUD,  LSAD,  LVAD, XXXXX, XXXXX,                  XXXXX, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,\
-  // ------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                   LGUI, LOWER,   SPC,      ENT, RAISE,  LALT \
-                              //`--------------------'  `--------------------'
-  )
+  [_ADJUST] = LAYOUT( \
+  //,-----------------------------------------------------.    ,-----------------------------------------------------.
+      _______, RGB_MOD, RGB_HUI, RGB_SAI, RGB_VAI, RGB_TOG,      _______, _______, _______, _______, _______, _______,\
+  // --------+--------+--------+--------+--------+--------|    |--------+--------+--------+--------+--------+--------|
+      _______,  MU_TOG, CK_TOGG,   AU_ON,  AU_OFF, AG_NORM,      AG_SWAP,  QWERTY, COLEMAK,  DVORAK, _______, _______, \
+  // --------+--------+--------+--------+--------+--------|    |--------+--------+--------+--------+--------+--------|
+      _______,RGB_RMOD, RGB_HUD, RGB_SAD, RGB_VAD, KC_RGB_T,     MG_NKRO, KC_MUTE, KC_VOLD, KC_VOLU, KC_MNXT, _______,\
+  // --------+--------+--------+--------+--------+--------+|  |+--------+--------+--------+--------+--------+--------|
+                                 _______, _______, _______,      _______, _______, _______ \
+                              //`--------------------------'  `---------------------------'
+  ),
 };
 
 int RGB_current_mode;
@@ -222,8 +245,11 @@ const char* read_layer_state(void) {
       break;
     default:
       switch (biton32(default_layer_state)) {
+        case _QWERTY:
+          snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Qwerty ");
+          break;
         case _COLEMAK:
-          snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Colemak ");
+          snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Colemak");
           break;
         case _DVORAK:
           snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Dvorak ");
@@ -288,6 +314,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #endif
 
   switch (keycode) {
+    case QWERTY:
+      if (record->event.pressed) {
+        set_single_persistent_default_layer(_QWERTY);
+      }
+      break;
+    case COLEMAK:
+      if (record->event.pressed) {
+        set_single_persistent_default_layer(_COLEMAK);
+      }
+      break;
+    case DVORAK:
+      if (record->event.pressed) {
+        set_single_persistent_default_layer(_DVORAK);
+      }
+      break;
     case LOWER:
       if (record->event.pressed) {
         layer_on(_LOWER);
