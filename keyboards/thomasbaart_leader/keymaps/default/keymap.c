@@ -15,9 +15,13 @@
  */
 #include QMK_KEYBOARD_H
 
+enum my_keycodes {
+  MY_KEYCODE = SAFE_RANGE
+};
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT(
-    KC_LEAD,  KC_D,  KC_E \
+    KC_LEAD,  KC_D,  MY_KEYCODE \
   ),
 };
 
@@ -36,15 +40,12 @@ void matrix_scan_user(void) {
     leading = false;
     leader_end();
 
-    SEQ_ONE_KEY(KC_E) {
+    SEQ_ONE_KEY(MY_KEYCODE) {
       // Anything you can do in a macro.
       SEND_STRING(SS_LCTRL(SS_LSFT("t")));
-    }
+    } 
     SEQ_TWO_KEYS(KC_E, KC_D) {
-      SEND_STRING(SS_LCTRL("a")SS_LCTRL("c"));
-    }
-    SEQ_THREE_KEYS(KC_D, KC_D, KC_E) {
-      SEND_STRING("https://start.duckduckgo.com"SS_TAP(X_ENTER));
+      SEND_STRING(SS_LGUI("r")"cmd"SS_TAP(KC_ENTER)SS_LCTRL("c"));
     }
   }
 }
