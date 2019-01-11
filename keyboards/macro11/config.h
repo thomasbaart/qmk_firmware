@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include "config_common.h"
-#include <stdbool.h>
 
 /* USB Device descriptor parameter */
 #define VENDOR_ID       0xFEED
@@ -98,18 +97,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ENCODERS_PAD_A { B6 }
 #define ENCODERS_PAD_B { B5 }
 #define ENCODER_RESOLUTION 4
-
-/* OLED support */
-
-#ifdef QWIIC_MICRO_OLED_ENABLE
-
-#undef I2C_ADDRESS_SA0_1
-#define I2C_ADDRESS_SA0_1 0b0111100
-#define LCDWIDTH      128
-#define LCDHEIGHT     32
-#define micro_oled_rotate_180
-
-#endif
 
 /* If defined, GRAVE_ESC will always act as ESC when CTRL is held.
  * This is userful for the Windows task manager shortcut (ctrl+shift+esc).
