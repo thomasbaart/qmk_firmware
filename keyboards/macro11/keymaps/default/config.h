@@ -17,3 +17,4 @@
 #pragma once
 
 // place overrides here
+#define SSD1306OLED
