@@ -14,12 +14,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
-
-// Defines the keycodes used by our macros in process_record_user
-enum custom_keycodes {
-  QMKBEST = SAFE_RANGE,
-  QMKURL
-};
+#include "ssd1306.h"
+#include "split_util.h"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT( /* Base */
@@ -29,35 +25,25 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-    case QMKBEST:
-      if (record->event.pressed) {
-        // when keycode QMKBEST is pressed
-        SEND_STRING("QMK is the best thing ever!");
-      } else {
-        // when keycode QMKBEST is released
-      }
-      break;
-    case QMKURL:
-      if (record->event.pressed) {
-        // when keycode QMKURL is pressed
-        SEND_STRING("https://qmk.fm/" SS_TAP(X_ENTER));
-      } else {
-        // when keycode QMKURL is released
-      }
-      break;
-  }
   return true;
 }
 
-void matrix_init_user(void) {
+void matrix_master_OLED_init (void) {
+	iota_gfx_init(); // Turn on the display
+}
 
+void matrix_init_user(void) {
 }
 
 void matrix_scan_user(void) {
+  iota_gfx_task(); // Performs routine tasks of the display
+}
 
+// This will be called on every matrix scan by iota_gfx_task
+void iota_gfx_task_user(void) {
+  iota_gfx_clear_screen();
+  iota_gfx_write("Hello world!");
 }
 
 void led_set_user(uint8_t usb_led) {
-
 }
