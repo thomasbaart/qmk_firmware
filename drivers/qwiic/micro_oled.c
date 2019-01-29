@@ -319,62 +319,74 @@ void micro_oled_init(void) {
   i2c_start(I2C_ADDRESS_SA0_1);
 
   // Display Init sequence for 64x48 OLED module
-  send_command(DISPLAYOFF);      // 0xAE
+  send_cmd1(DISPLAYOFF);      // 0xAE
 
-  send_command(SETDISPLAYCLOCKDIV);  // 0xD5
-  send_command(0x80);          // the suggested ratio 0x80
+  send_cmd2(SETDISPLAYCLOCKDIV, 0x80);  // 0xD5, the suggested ratio 0x80
 
-  send_command(SETMULTIPLEX);      // 0xA8
-  send_command(LCDHEIGHT - 1);
+  send_cmd2(SETMULTIPLEX, LCDHEIGHT - 1);      // 0xA8
 
-  send_command(SETDISPLAYOFFSET);    // 0xD3
-  send_command(0x00);         // no offset
+  send_cmd2(SETDISPLAYOFFSET, 0x00);    // 0xD3, no offset
 
-  send_command(SETSTARTLINE | 0x00);  // line #0
+  send_cmd1(SETSTARTLINE | 0x00);  // line #0
 
-  send_command(CHARGEPUMP);      // enable charge pump
-  send_command(0x14);
+  send_cmd2(CHARGEPUMP, 0x14);      // enable charge pump
 
-  send_command(NORMALDISPLAY);     // 0xA6
-  send_command(DISPLAYALLONRESUME);  // 0xA4
+  send_cmd1(NORMALDISPLAY);     // 0xA6
+  send_cmd1(DISPLAYALLONRESUME);  // 0xA4
 
 //display at regular orientation
-  send_command(SEGREMAP | 0x1);
-  send_command(COMSCANDEC);
+  send_cmd1(SEGREMAP | 0x1);
+  send_cmd1(COMSCANDEC);
 
 //rotate display 180
 #ifdef micro_oled_rotate_180
-  send_command(SEGREMAP);
-  send_command(COMSCANINC);
+  send_cmd1(SEGREMAP);
+  send_cmd1(COMSCANINC);
 #endif
 
-  send_command(MEMORYMODE);
-  send_command(0x10);
+  send_cmd2(MEMORYMODE, 0x10);
 
-  send_command(SETCOMPINS);      // 0xDA
 if (LCDHEIGHT > 32) {
-  send_command(0x12);
+  send_cmd2(SETCOMPINS, 0x12);// 0xDA
 } else {
-  send_command(0x02);
+  send_cmd2(SETCOMPINS, 0x02);// 0xDA
 }
-  send_command(SETCONTRAST);     // 0x81
-  send_command(0x8F);
+  send_cmd2(SETCONTRAST, 0x8F);     // 0x81
 
-  send_command(SETPRECHARGE);      // 0xd9
-  send_command(0xF1);
+  send_cmd2(SETPRECHARGE, 0xF1);      // 0xd9
 
-  send_command(SETVCOMDESELECT);     // 0xDB
-  send_command(0x40);
+  send_cmd2(SETVCOMDESELECT, 0x40);     // 0xDB
 
-  send_command(DISPLAYON);       //--turn on oled panel
+  send_cmd1(DISPLAYON);       //--turn on oled panel
   clear_screen();           // Erase hardware memory inside the OLED controller to avoid random data in memory.
   send_buffer();
 }
 
 void send_command(uint8_t command) {
+  send_cmd1(command);
+}
+
+void send_cmd1(uint8_t cmd) {
   micro_oled_transfer_buffer[0] = I2C_COMMAND;
-  micro_oled_transfer_buffer[1] = command;
+  micro_oled_transfer_buffer[1] = cmd;
   i2c_transmit(I2C_ADDRESS_SA0_1 << 1, micro_oled_transfer_buffer, 2, 100);
+}
+
+void send_cmd2(uint8_t cmd, uint8_t opr) {
+  micro_oled_transfer_buffer[0] = I2C_COMMAND;
+  micro_oled_transfer_buffer[1] = cmd;
+  micro_oled_transfer_buffer[2] = opr; 
+  i2c_transmit(I2C_ADDRESS_SA0_1 << 1, micro_oled_transfer_buffer, 3, 100);
+}
+
+// Write 3-byte command sequence.
+// Returns true on success
+void send_cmd3(uint8_t cmd, uint8_t opr1, uint8_t opr2) {
+  micro_oled_transfer_buffer[0] = I2C_COMMAND;
+  micro_oled_transfer_buffer[1] = cmd;
+  micro_oled_transfer_buffer[2] = opr1; 
+  micro_oled_transfer_buffer[3] = opr2; 
+  i2c_transmit(I2C_ADDRESS_SA0_1 << 1, micro_oled_transfer_buffer, 4, 100);
 }
 
 void send_data(uint8_t data) {
@@ -388,15 +400,15 @@ void send_data(uint8_t data) {
 */
 void set_page_address(uint8_t address) {
   address = (0xB0 | address);
-  send_command(address);
+  send_cmd1(address);
 }
 
 /** \brief Set SSD1306 column address.
     Send column address command and address to the SSD1306 OLED controller.
 */
 void set_column_address(uint8_t address) {
-  send_command( ( 0x10 | (address >> 4) ) + ((128 - LCDWIDTH) >> 8) );
-  send_command( 0x0F & address );
+  send_cmd1( ( 0x10 | (address >> 4) ) + ((128 - LCDWIDTH) >> 8) );
+  send_cmd1( 0x0F & address );
 }
 
 /** \brief Clear SSD1306's memory.
@@ -425,9 +437,9 @@ void clear_buffer(void) {
 */
 void invert_screen(bool invert) {
   if (invert) {
-    send_command(INVERTDISPLAY);
+    send_cmd1(INVERTDISPLAY);
   } else {
-    send_command(NORMALDISPLAY);
+    send_cmd1(NORMALDISPLAY);
   }
 }
 
@@ -435,8 +447,8 @@ void invert_screen(bool invert) {
     OLED contract value from 0 to 255. Note: Contrast level is not very obvious.
 */
 void set_contrast(uint8_t contrast) {
-  send_command(SETCONTRAST);     // 0x81
-  send_command(contrast);
+  send_cmd1(SETCONTRAST);     // 0x81
+  send_cmd1(contrast);
 }
 
 /** \brief Transfer display buffer.
