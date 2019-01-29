@@ -18,4 +18,3 @@
 
 // place overrides here
 #define SSD1306OLED
-#define USE_I2C

@@ -15,7 +15,6 @@
  */
 #include QMK_KEYBOARD_H
 #include "ssd1306.h"
-#include "split_util.h"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT( /* Base */
@@ -28,11 +27,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
-void matrix_master_OLED_init (void) {
-	iota_gfx_init(); // Turn on the display
-}
-
 void matrix_init_user(void) {
+	iota_gfx_init(); // Turn on the display
 }
 
 void matrix_scan_user(void) {
