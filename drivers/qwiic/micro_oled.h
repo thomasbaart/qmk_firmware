@@ -34,6 +34,9 @@
 void micro_oled_init(void);
 
 void send_command(uint8_t command);
+void send_cmd1(uint8_t cmd);
+void send_cmd2(uint8_t cmd, uint8_t opr);
+void send_cmd3(uint8_t cmd, uint8_t opr1, uint8_t opr2);
 void send_data(uint8_t data);
 void set_page_address(uint8_t address);
 void set_column_address(uint8_t address);
