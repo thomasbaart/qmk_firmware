@@ -14,8 +14,8 @@ enum custom_keycodes {
   ADJUST,
 };
 
-#define LWR_TAB LT(LOWER, KC_TAB)
-#define RSE_ESC LT(RAISE, KC_ESC)
+#define LWR_TAB LT(_LOWER, KC_TAB)
+#define RSE_ESC LT(_RAISE, KC_ESC)
 #define BSP_SFT SFT_T(KC_BSPC)
 #define SPC_SFT SFT_T(KC_SPC)
 
@@ -93,6 +93,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, _______, _______,          _______, _______, _______, _______,      _______, _______, _______, _______,          _______, _______,  _______  \
   ),
 };
+
+uint32_t layer_state_set_user(uint32_t state) {
+  return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
