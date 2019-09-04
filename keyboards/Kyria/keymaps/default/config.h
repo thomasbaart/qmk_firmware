@@ -19,3 +19,8 @@
 // place overrides here
 #define LEADER_PER_KEY_TIMING
 #define LEADER_TIMEOUT 250
+
+#define OLED_DISPLAY_128X64
+// #define OLED_DISABLE_TIMEOUT
+
+#define ENCODER_RESOLUTION 2
