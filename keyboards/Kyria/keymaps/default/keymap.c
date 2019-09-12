@@ -28,26 +28,26 @@ enum kyria_keycodes {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_QWERTY] = LAYOUT( /* Base */
       KC_ESC,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                      /**/                   KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC, \
-      KC_TAB,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                      /**/                   KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, \
-      KC_LCTL, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_LCTL, KC_LALT, /**/ KC_BSPC, KC_MENU, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_ALGR, \
-                                 KC_LGUI, KC_ESC,  LOWER,   KC_LSFT, KC_ENT,  /**/ KC_BSPC, KC_SPC,  RAISE,   KC_TAB,  KC_LEAD
+      KC_LSFT, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                      /**/                   KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, \
+      KC_LCTL, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_LCTL, KC_LSFT, /**/ KC_BSPC, KC_DEL,  KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_ALGR, \
+                                 KC_LGUI, KC_LALT, LOWER,   KC_LSFT, KC_ENT,  /**/ KC_BSPC, KC_SPC,  RAISE,   KC_TAB,  KC_LEAD
     ),
     [_LOWER] = LAYOUT(
       _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                                            KC_SLSH, KC_7,    KC_8,    KC_9,    KC_MINS, _______, \
       _______, KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,                                           KC_ASTR, KC_4,    KC_5,    KC_6,    KC_PLUS, _______, \
-      _______, KC_F11,  KC_F12,  KC_F13,  KC_F14,  KC_F15,  _______, _______,      _______, _______, _______, KC_1,    KC_2,    KC_3,    KC_EQL,  _______, \
-                                 _______, _______, _______, _______, _______,      _______, _______, _______, KC_0,    _______
+      _______, KC_F11,  KC_F12,  KC_F13,  KC_F14,  KC_F15,  _______, _______,      _______, _______, KC_COMM, KC_1,    KC_2,    KC_3,    KC_EQL,  _______, \
+                                 _______, _______, _______, _______, _______,      _______, KC_RALT, _______, KC_0,    _______
     ),
     [_RAISE] = LAYOUT(
-      KC_TILD, KC_PLUS, KC_MINS, KC_LBRC, KC_RBRC, _______,                                          KC_PGUP, KC_HOME, KC_UP,   KC_END,  RGB_VAD, RGB_VAI, \
-      KC_GRV,  KC_EQL,  KC_UNDS, KC_LPRN, KC_RPRN, KC_BSLS,                                          KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, RGB_HUD, RGB_HUI, \
-      _______, _______, _______, KC_LCBR, KC_RCBR, _______, _______, _______,      _______, _______, _______, _______, _______, RGB_TOG, RGB_SAD, RGB_SAI, \
+      KC_TILD, KC_PLUS, KC_MINS, KC_LBRC, KC_RBRC, _______,                                          KC_PGUP, KC_HOME, KC_UP,   KC_END,  _______, _______, \
+      KC_GRV,  KC_EQL,  KC_UNDS, KC_LPRN, KC_RPRN, KC_BSLS,                                          KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______, \
+      _______, _______, _______, KC_LCBR, KC_RCBR, _______, _______, _______,      _______, _______, _______, _______, _______, _______, _______, _______, \
                                  _______, _______, _______, _______, _______,      _______, _______, _______, _______, _______
     ),
     [_ADJUST] = LAYOUT(
-      _______, _______, _______, _______, _______, _______,                                          _______, _______, KC_VOLU, _______, _______, _______, \
-      _______, _______, _______, _______, _______, _______,                                          _______, KC_MPRV, KC_MPLY, KC_MNXT, _______, _______, \
-      _______, _______, _______, _______, _______, _______, _______, _______,      _______, _______, _______, _______, KC_VOLD, KC_MUTE, _______, _______, \
+      _______, _______, _______, _______, _______, _______,                                          _______, _______, KC_VOLU, RGB_TOG, RGB_VAD, RGB_VAI, \
+      _______, _______, _______, _______, _______, _______,                                          _______, KC_MPRV, KC_MPLY, KC_MNXT, RGB_HUD, RGB_HUI, \
+      _______, _______, _______, _______, _______, _______, _______, _______,      _______, _______, _______, _______, KC_VOLD, KC_MUTE, RGB_SAD, RGB_SAI, \
                                  _______, _______, _______, _______, _______,      _______, _______, _______, _______, _______
     ),
 };
@@ -89,7 +89,12 @@ void matrix_scan_user(void) {
     leader_end();
 
     SEQ_TWO_KEYS(KC_B, KC_C) {
+      // Discord bongocat
       SEND_STRING(":bongocat:"SS_TAP(X_ENTER));
+    }
+    SEQ_TWO_KEYS(KC_S, KC_S) {
+      // Windows screenshot
+      SEND_STRING(SS_LGUI(SS_LSFT("S")));
     }
   }
 }
@@ -148,7 +153,7 @@ void oled_task_user(void) {
     render_status();     // Renders the current keyboard state (layer, lock, caps, scroll, etc)
   } else {
     render_qmk_logo();
-    oled_write_P(PSTR("Kyria rev0.4 alpha\n"), false);
+    oled_write_P(PSTR("Kyria rev0.6 alpha\n"), false);
     oled_write_P(PSTR("splitkb.com\n"), false);
     oled_write_P(PSTR("Thomas Baart\n"), false);
     oled_write_P(PSTR("thomasbaart.nl\n"), false);
@@ -158,16 +163,41 @@ void oled_task_user(void) {
 
 void encoder_update_user(uint8_t index, bool clockwise) {
   if (index == 0) {
-    if (clockwise) {
-      SEND_STRING(SS_LCTRL("z"));
-    } else {
-      SEND_STRING(SS_LCTRL("y"));
+     switch (biton32(layer_state)) {
+      case _QWERTY:
+        if (clockwise) {
+          SEND_STRING(SS_LCTRL("z"));
+        } else {
+          SEND_STRING(SS_LCTRL("y"));
+        }
+        break;
+
+      default:
+        // other layers - =/+ (quals/plus) (CW) and -/_ (minus/underscore) (CCW)
+        if (clockwise) {
+          tap_code(KC_EQL);
+        } else {
+          tap_code(KC_MINS);
+        }
+        break;
     }
   } else if (index == 1) {
-    if (clockwise) {
-      tap_code(KC_PGUP);
-    } else {
-      tap_code(KC_PGDN);
+    switch (biton32(layer_state)) {
+      case _QWERTY:
+        if (clockwise) {
+          tap_code(KC_PGDN);
+        } else {
+          tap_code(KC_PGUP);
+        }
+        break;
+
+      default:
+        if (clockwise) {
+          tap_code(KC_VOLU);
+        } else {
+          tap_code(KC_VOLD);
+        }
+        break;
     }
   }
 }

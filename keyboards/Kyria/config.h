@@ -51,8 +51,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define ENCODERS_PAD_A { C6 }
 #define ENCODERS_PAD_B { B5 }
-// #define ENCODERS_PAD_A_RIGHT { B5 }
-// #define ENCODERS_PAD_B_RIGHT { C6 }
+#define ENCODERS_PAD_A_RIGHT { B5 }
+#define ENCODERS_PAD_B_RIGHT { C6 }
 
 /*
  * Split Keyboard specific options, make sure you have 'SPLIT_KEYBOARD = yes' in your rules.mk, and define SOFT_SERIAL_PIN.
