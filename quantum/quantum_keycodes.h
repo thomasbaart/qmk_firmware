@@ -31,9 +31,9 @@
 #define XXXXXXX KC_NO
 
 enum quantum_keycodes {
-    // Ranges used in shortucuts - not to be used directly
-    QK_TMK                = 0x0000,
-    QK_TMK_MAX            = 0x00FF,
+    // Ranges used in shortcuts - not to be used directly
+    QK_BASIC              = 0x0000,
+    QK_BASIC_MAX          = 0x00FF,
     QK_MODS               = 0x0100,
     QK_LCTL               = 0x0100,
     QK_LSFT               = 0x0200,
@@ -87,7 +87,9 @@ enum quantum_keycodes {
 #endif
 #ifdef UNICODEMAP_ENABLE
     QK_UNICODEMAP         = 0x8000,
-    QK_UNICODEMAP_MAX     = 0x83FF,
+    QK_UNICODEMAP_MAX     = 0xBFFF,
+    QK_UNICODEMAP_PAIR    = 0xC000,
+    QK_UNICODEMAP_PAIR_MAX = 0xFFFF,
 #endif
 
     // Loose keycodes - to be used directly
@@ -422,6 +424,9 @@ enum quantum_keycodes {
     RGB_MODE_GRADIENT,
     RGB_MODE_RGBTEST,
 
+    //Momentum matching toggle
+    VLK_TOG,
+
     // Left shift, open paren
     KC_LSPO,
 
@@ -455,12 +460,46 @@ enum quantum_keycodes {
 
     UNICODE_MODE_FORWARD,
     UNICODE_MODE_REVERSE,
-
     UNICODE_MODE_OSX,
     UNICODE_MODE_LNX,
     UNICODE_MODE_WIN,
     UNICODE_MODE_BSD,
     UNICODE_MODE_WINC,
+
+    HPT_ON,
+    HPT_OFF,
+    HPT_TOG,
+    HPT_RST,
+    HPT_FBK,
+    HPT_BUZ,
+    HPT_MODI,
+    HPT_MODD,
+    HPT_DWLI,
+    HPT_DWLD,
+
+    // Left control, open paren
+    KC_LCPO,
+
+    // Right control, close paren
+    KC_RCPC,
+
+    // Left control, open paren
+    KC_LAPO,
+
+    // Right control, close paren
+    KC_RAPC,
+
+    CMB_ON,
+    CMB_OFF,
+    CMB_TOG,
+  
+    MAGIC_SWAP_LCTL_LGUI,
+    MAGIC_SWAP_RCTL_RGUI,
+    MAGIC_UNSWAP_LCTL_LGUI,
+    MAGIC_UNSWAP_RCTL_RGUI,
+    MAGIC_SWAP_CTL_GUI,
+    MAGIC_UNSWAP_CTL_GUI,
+    MAGIC_TOGGLE_CTL_GUI,
 
     // always leave at the end
     SAFE_RANGE
@@ -609,6 +648,10 @@ enum quantum_keycodes {
 #define AG_NORM MAGIC_UNSWAP_ALT_GUI
 #define AG_TOGG MAGIC_TOGGLE_ALT_GUI
 
+#define CG_SWAP MAGIC_SWAP_CTL_GUI
+#define CG_NORM MAGIC_UNSWAP_CTL_GUI
+#define CG_TOGG MAGIC_TOGGLE_CTL_GUI
+
 // GOTO layer - 16 layers max
 // when:
 // ON_PRESS    = 1
@@ -687,7 +730,8 @@ enum quantum_keycodes {
 #endif
 #ifdef UNICODEMAP_ENABLE
   // Allows Unicode input up to 0x10FFFF, requires unicode_map
-  #define X(i) (QK_UNICODEMAP | (i))
+  #define X(i)     (QK_UNICODEMAP | (i))
+  #define XP(i, j) (QK_UNICODEMAP_PAIR | ((i) & 0x7F) | (((j) & 0x7F) << 7)) // 127 max i and j
 #endif
 
 #define UC_MOD  UNICODE_MODE_FORWARD

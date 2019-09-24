@@ -39,12 +39,17 @@ void eeconfig_init_quantum(void) {
   eeprom_update_byte(EECONFIG_DEBUG,          0);
   eeprom_update_byte(EECONFIG_DEFAULT_LAYER,  0);
   default_layer_state = 0;
-  eeprom_update_byte(EECONFIG_KEYMAP,         0);
+  eeprom_update_byte(EECONFIG_KEYMAP_LOWER_BYTE, 0);
+  eeprom_update_byte(EECONFIG_KEYMAP_UPPER_BYTE, 0);
   eeprom_update_byte(EECONFIG_MOUSEKEY_ACCEL, 0);
   eeprom_update_byte(EECONFIG_BACKLIGHT,      0);
   eeprom_update_byte(EECONFIG_AUDIO,             0xFF); // On by default
   eeprom_update_dword(EECONFIG_RGBLIGHT,      0);
   eeprom_update_byte(EECONFIG_STENOMODE,      0);
+  eeprom_update_dword(EECONFIG_HAPTIC,        0);
+  eeprom_update_byte(EECONFIG_VELOCIKEY,      0);
+  eeprom_update_dword(EECONFIG_RGB_MATRIX,    0);
+  eeprom_update_byte(EECONFIG_RGB_MATRIX_SPEED, 0);
 
   eeconfig_init_kb();
 }
@@ -123,12 +128,17 @@ void eeconfig_update_default_layer(uint8_t val) { eeprom_update_byte(EECONFIG_DE
  *
  * FIXME: needs doc
  */
-uint8_t eeconfig_read_keymap(void)      { return eeprom_read_byte(EECONFIG_KEYMAP); }
+uint16_t eeconfig_read_keymap(void) {
+    return ( eeprom_read_byte(EECONFIG_KEYMAP_LOWER_BYTE) | (eeprom_read_byte(EECONFIG_KEYMAP_UPPER_BYTE) << 8) );
+}
 /** \brief eeconfig update keymap
  *
  * FIXME: needs doc
  */
-void eeconfig_update_keymap(uint8_t val) { eeprom_update_byte(EECONFIG_KEYMAP, val); }
+void eeconfig_update_keymap(uint16_t val) {
+    eeprom_update_byte(EECONFIG_KEYMAP_LOWER_BYTE, val & 0xFF);
+    eeprom_update_byte(EECONFIG_KEYMAP_UPPER_BYTE, ( val >> 8 ) & 0xFF );
+}
 
 /** \brief eeconfig read backlight
  *
@@ -177,3 +187,9 @@ uint32_t eeconfig_read_user(void)      { return eeprom_read_dword(EECONFIG_USER)
 void eeconfig_update_user(uint32_t val) { eeprom_update_dword(EECONFIG_USER, val); }
 
 
+uint32_t eeconfig_read_haptic(void)      { return eeprom_read_dword(EECONFIG_HAPTIC); }
+/** \brief eeconfig update user
+ *
+ * FIXME: needs doc
+ */
+void eeconfig_update_haptic(uint32_t val) { eeprom_update_dword(EECONFIG_HAPTIC, val); }
