@@ -23,6 +23,7 @@
 #define SS_BACK SS_LGUI(X_LEFT)
 #define KC_FORWARD LGUI(KC_RGHT)
 #define KC_SHFTTB LSFT_T(KC_TAB)
+#define KC_OFF LGUI(LALT(KC_EJCT))
 
 enum kyria_keycodes {
   LOWER = SAFE_RANGE,
@@ -30,20 +31,21 @@ enum kyria_keycodes {
 };
 
 enum macro_keycodes {
-    CHIME_GIF
+    CHIME_GIF,
+    OFF
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_QWERTY] = LAYOUT( /* Base */
       KC_ESC,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                      /**/                   KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC, \
-      KC_SHFTTB, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                      /**/                   KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, \
-      KC_LCTL, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_LCTL, KC_LSFT, /**/ KC_BSPC, KC_DEL,  KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_ALGR, \
-                                 KC_LALT, KC_LGUI, LOWER,   KC_LSFT, KC_ENT,  /**/ KC_BSPC, KC_SPC,  RAISE,   KC_TAB,  KC_LEAD
+      KC_SHFTTB, KC_A,    KC_S,  KC_D,    KC_F,    KC_G,                      /**/                   KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, \
+      KC_LCTL, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_LCBR, KC_LSFT, /**/ KC_BSPC, KC_RCBR,  KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_ALGR, \
+                                 KC_LALT, KC_LGUI, LOWER,   KC_ENT, KC_ENT,  /**/ KC_BSPC, KC_SPC,  RAISE,   KC_TAB,  KC_OFF
     ),
     [_LOWER] = LAYOUT(
-      _______,    KC_1,   KC_2,   KC_3,   KC_4,   KC_5,                                                KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    CHIME_GIF, \
-      _______, KC_LPRN,   KC_RPRN,   KC_LBRC,   KC_RBRC,   _______,                                 KC_ASTR, KC_4,    KC_5,    KC_6,    KC_PLUS, _______, \
-      _______,    KC_LCBR,  KC_RCBR,  _______,  _______,  _______,  _______, _______,      _______, _______, KC_COMM, KC_1,    KC_2,    KC_3,    KC_EQL,  _______, \
+      _______, KC_1,      KC_2,    KC_3,      KC_4,     KC_5,                                    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    CHIME_GIF, \
+      _______, KC_LPRN,   KC_RPRN, KC_LBRC,   KC_RBRC,  _______,                                 KC_ASTR, KC_4,    KC_5,    KC_6,    KC_PLUS, _______, \
+      _______, KC_LCBR,   KC_RCBR, _______,  _______,  _______,  KC_LBRC, _______,      _______, KC_RBRC, KC_COMM, KC_1,    KC_2,    KC_3,    KC_EQL,  _______, \
                                  _______, _______, _______, _______, _______,            _______, KC_RALT, _______, KC_0,    _______
     ),
     [_RAISE] = LAYOUT(
@@ -190,9 +192,18 @@ void encoder_update_user(uint8_t index, bool clockwise) {
         break;
       case _RAISE:
         if (clockwise) {
+          // browser forward
           tap_code16(G(KC_LEFT));
         } else {
+          // browser back
           tap_code16(G(KC_RIGHT));
+        }
+        break;
+      case _LOWER:
+        if (clockwise) {
+          tap_code16(G(KC_TAB));
+        } else {
+          tap_code16(G(S(KC_TAB)));
         }
         break;
 
